@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crowdfunding Success Predictor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366f1',
+                        secondary: '#4f46e5',
+                        accent: '#06b6d4',
+                        success: '#10b981',
+                        warning: '#f59e0b'
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-up': 'slideUp 0.6s ease-out',
+                        'pulse-slow': 'pulse 3s infinite'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.9);
+        }
+    </style>
+</head>
+
+<body class="gradient-bg min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-6xl mx-auto">
+            <!-- Header -->
+            <div class="text-center mb-12 animate-fade-in">
+                <div class="inline-flex items-center justify-center w-20 h-20 bg-white rounded-full shadow-lg mb-6">
+                    <i class="fas fa-chart-line text-3xl text-primary"></i>
+                </div>
+                <h1 class="text-5xl font-bold text-white mb-4 drop-shadow-lg">
+                    Crowdfunding Success Predictor
+                </h1>
+                <p class="text-xl text-white/90 max-w-2xl mx-auto leading-relaxed">
+                    Harness the power of machine learning to predict your campaign's success.
+                    Get insights based on real crowdfunding data and advanced analytics.
+                </p>
+                <div class="flex justify-center items-center mt-6 space-x-6 text-white/80">
+                    <div class="flex items-center">
+                        <i class="fas fa-brain mr-2"></i>
+                        <span>AI-Powered</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fas fa-database mr-2"></i>
+                        <span>100k+ Data Points</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fas fa-lightning-bolt mr-2"></i>
+                        <span>Instant Results</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form -->
+            <div class="glass-effect rounded-2xl shadow-2xl p-8 animate-slide-up border border-white/20">
+                <div class="mb-8">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2 flex items-center">
+                        <i class="fas fa-rocket mr-3 text-primary"></i>
+                        Campaign Details
+                    </h2>
+                    <p class="text-gray-600">Fill in your campaign information to get an accurate prediction</p>
+                </div>
+
+                <form id="predictionForm" class="space-y-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Goal Amount -->
+                        <div class="group">
+                            <label for="goalAmount"
+                                class="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
+                                <i class="fas fa-dollar-sign mr-2 text-success"></i>
+                                Goal Amount
+                            </label>
+                            <input type="number" id="goalAmount" name="goalAmount" required
+                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200 group-hover:border-gray-300"
+                                placeholder="e.g., 50,000">
+                        </div>
+
+                        <!-- Duration Days -->
+                        <div class="group">
+                            <label for="durationDays"
+                                class="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
+                                <i class="fas fa-calendar-alt mr-2 text-accent"></i>
+                                Campaign Duration (Days)
+                            </label>
+                            <input type="number" id="durationDays" name="durationDays" required
+                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200 group-hover:border-gray-300"
+                                placeholder="e.g., 30">
+                        </div>
+
+                        <!-- Number of Backers -->
+                        <div class="group">
+                            <label for="numBackers"
+                                class="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
+                                <i class="fas fa-users mr-2 text-primary"></i>
+                                Expected Number of Backers
+                            </label>
+                            <input type="number" id="numBackers" name="numBackers" required
+                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200 group-hover:border-gray-300"
+                                placeholder="e.g., 500">
+                        </div>
+
+                        <!-- Owner Experience -->
+                        <div class="group">
+                            <label for="ownerExperience"
+                                class="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
+                                <i class="fas fa-star mr-2 text-warning"></i>
+                                Owner Experience (Years)
+                            </label>
+                            <input type="number" id="ownerExperience" name="ownerExperience" required
+                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200 group-hover:border-gray-300"
+                                placeholder="e.g., 5">
+                        </div>
+
+                        <!-- Social Media Presence -->
+                        <div class="group">
+                            <label for="socialMediaPresence"
+                                class="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
+                                <i class="fas fa-hashtag mr-2 text-pink-500"></i>
+                                Social Media Followers
+                            </label>
+                            <input type="number" id="socialMediaPresence" name="socialMediaPresence" required
+                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200 group-hover:border-gray-300"
+                                placeholder="e.g., 10,000">
+                        </div>
+
+                        <!-- Number of Updates -->
+                        <div class="group">
+                            <label for="numUpdates"
+                                class="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
+                                <i class="fas fa-bullhorn mr-2 text-orange-500"></i>
+                                Planned Updates
+                            </label>
+                            <input type="number" id="numUpdates" name="numUpdates" required
+                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200 group-hover:border-gray-300"
+                                placeholder="e.g., 15">
+                        </div>
+
+                        <!-- Category -->
+                        <div class="group">
+                            <label for="category"
+                                class="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
+                                <i class="fas fa-tags mr-2 text-purple-500"></i>
+                                Category
+                            </label>
+                            <select id="category" name="category" required
+                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200 group-hover:border-gray-300 bg-white">
+                                <option value="">Select Category</option>
+                                <option value="Film">🎬 Film</option>
+                                <option value="Games">🎮 Games</option>
+                                <option value="Music">🎵 Music</option>
+                                <option value="Other">📦 Other</option>
+                                <option value="Publishing">📚 Publishing</option>
+                                <option value="Technology">💻 Technology</option>
+                            </select>
+                        </div>
+
+                        <!-- Launch Month -->
+                        <div class="group">
+                            <label for="launchMonth"
+                                class="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
+                                <i class="fas fa-calendar mr-2 text-blue-500"></i>
+                                Launch Month
+                            </label>
+                            <select id="launchMonth" name="launchMonth" required
+                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200 group-hover:border-gray-300 bg-white">
+                                <option value="">Select Month</option>
+                                <option value="January">January</option>
+                                <option value="February">February</option>
+                                <option value="March">March</option>
+                                <option value="April">April</option>
+                                <option value="May">May</option>
+                                <option value="June">June</option>
+                                <option value="July">July</option>
+                                <option value="August">August</option>
+                                <option value="September">September</option>
+                                <option value="October">October</option>
+                                <option value="November">November</option>
+                                <option value="December">December</option>
+                            </select>
+                        </div>
+
+                        <!-- Country -->
+                        <div class="group">
+                            <label for="country"
+                                class="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
+                                <i class="fas fa-globe mr-2 text-green-500"></i>
+                                Country
+                            </label>
+                            <select id="country" name="country" required
+                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200 group-hover:border-gray-300 bg-white">
+                                <option value="">Select Country</option>
+                                <option value="USA">🇺🇸 USA</option>
+                                <option value="UK">🇬🇧 UK</option>
+                                <option value="Canada">🇨🇦 Canada</option>
+                                <option value="Germany">🇩🇪 Germany</option>
+                            </select>
+                        </div>
+
+                        <!-- Currency -->
+                        <div class="group">
+                            <label for="currency"
+                                class="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
+                                <i class="fas fa-coins mr-2 text-yellow-500"></i>
+                                Currency
+                            </label>
+                            <select id="currency" name="currency" required
+                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200 group-hover:border-gray-300 bg-white">
+                                <option value="">Select Currency</option>
+                                <option value="USD">💵 USD</option>
+                                <option value="GBP">💷 GBP</option>
+                                <option value="EUR">💶 EUR</option>
+                                <option value="CAD">🍁 CAD</option>
+                            </select>
+                        </div>
+
+                        <!-- Video Included -->
+                        <div class="group">
+                            <label for="videoIncluded"
+                                class="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
+                                <i class="fas fa-video mr-2 text-red-500"></i>
+                                Video Included
+                            </label>
+                            <select id="videoIncluded" name="videoIncluded" required
+                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200 group-hover:border-gray-300 bg-white">
+                                <option value="">Select Option</option>
+                                <option value="Yes">✅ Yes</option>
+                                <option value="No">❌ No</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="text-center pt-8">
+                        <button type="submit" id="predictBtn"
+                            class="bg-gradient-to-r from-primary to-secondary hover:from-secondary hover:to-primary text-white font-bold py-4 px-12 rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl focus:outline-none focus:ring-4 focus:ring-primary/50 flex items-center justify-center mx-auto group">
+                            <i class="fas fa-magic mr-3 group-hover:animate-pulse"></i>
+                            Predict Raised Amount
+                            <i class="fas fa-arrow-right ml-3 group-hover:translate-x-1 transition-transform"></i>
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Loading Spinner -->
+                <div id="loading" class="hidden text-center py-12 animate-fade-in">
+                    <div
+                        class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-primary to-secondary rounded-full animate-pulse-slow mb-4">
+                        <i class="fas fa-brain text-white text-2xl animate-pulse"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">AI is Analyzing Your Campaign</h3>
+                    <p class="text-gray-600">Processing 100k+ data points to generate your prediction...</p>
+                    <div class="flex justify-center mt-4">
+                        <div class="flex space-x-1">
+                            <div class="w-2 h-2 bg-primary rounded-full animate-bounce"></div>
+                            <div class="w-2 h-2 bg-primary rounded-full animate-bounce" style="animation-delay: 0.1s">
+                            </div>
+                            <div class="w-2 h-2 bg-primary rounded-full animate-bounce" style="animation-delay: 0.2s">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Enhanced Result -->
+                <div id="result" class="hidden mt-8 animate-slide-up">
+                    <div
+                        class="bg-gradient-to-r from-success/10 to-emerald-50 border-2 border-success/20 rounded-2xl p-8 shadow-xl">
+                        <div class="text-center mb-6">
+                            <div class="inline-flex items-center justify-center w-16 h-16 bg-success rounded-full mb-4">
+                                <i class="fas fa-check text-white text-2xl"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-success mb-2">Prediction Complete!</h3>
+                        </div>
+
+                        <!-- Main Prediction -->
+                        <div class="text-center mb-8">
+                            <p class="text-lg text-gray-600 mb-2">Predicted Raised Amount</p>
+                            <p class="text-5xl font-bold text-success" id="predictionAmount"></p>
+                        </div>
+
+                        <!-- Campaign Details Summary -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                            <div class="bg-white/70 rounded-xl p-4 text-center">
+                                <div class="text-2xl mb-2" id="categoryIcon"></div>
+                                <h4 class="font-semibold text-gray-700">Category</h4>
+                                <p class="text-lg font-bold text-primary" id="selectedCategory"></p>
+                            </div>
+                            <div class="bg-white/70 rounded-xl p-4 text-center">
+                                <div class="text-2xl mb-2">📅</div>
+                                <h4 class="font-semibold text-gray-700">Launch Month</h4>
+                                <p class="text-lg font-bold text-primary" id="selectedMonth"></p>
+                            </div>
+                            <div class="bg-white/70 rounded-xl p-4 text-center">
+                                <div class="text-2xl mb-2" id="countryFlag"></div>
+                                <h4 class="font-semibold text-gray-700">Country</h4>
+                                <p class="text-lg font-bold text-primary" id="selectedCountry"></p>
+                            </div>
+                        </div>
+
+                        <!-- Key Insights -->
+                        <div class="bg-white/50 rounded-xl p-6">
+                            <h4 class="text-lg font-semibold text-gray-700 mb-4 flex items-center">
+                                <i class="fas fa-lightbulb mr-2 text-warning"></i>
+                                Key Insights for Your Campaign
+                            </h4>
+                            <div id="insights" class="space-y-2 text-gray-600"></div>
+                        </div>
+
+                        <!-- Success Probability -->
+                        <div class="mt-6 text-center">
+                            <div class="inline-flex items-center bg-white/70 rounded-full px-6 py-3">
+                                <i class="fas fa-chart-pie mr-2 text-primary"></i>
+                                <span class="text-sm font-medium text-gray-600">Based on similar campaigns in </span>
+                                <span class="font-bold text-primary ml-1" id="campaignContext"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Error -->
+                <div id="error" class="hidden mt-8 animate-slide-up">
+                    <div class="bg-red-50 border-2 border-red-200 rounded-2xl p-6 shadow-xl">
+                        <div class="flex items-center mb-4">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-exclamation-triangle text-red-500 text-2xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-lg font-semibold text-red-800">Prediction Error</h3>
+                                <p class="text-red-700" id="errorMessage"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Category icons mapping
+        const categoryIcons = {
+            'Film': '🎬',
+            'Games': '🎮',
+            'Music': '🎵',
+            'Other': '📦',
+            'Publishing': '📚',
+            'Technology': '💻'
+        };
+
+        // Country flags mapping
+        const countryFlags = {
+            'USA': '🇺🇸',
+            'UK': '🇬🇧',
+            'Canada': '🇨🇦',
+            'Germany': '🇩🇪'
+        };
+
+        // Generate insights based on campaign data
+        function generateInsights(data, prediction) {
+            const insights = [];
+            const goalAmount = parseInt(data.goalAmount);
+            const duration = parseInt(data.durationDays);
+            const backers = parseInt(data.numBackers);
+
+            // Goal vs Prediction analysis
+            const successRatio = prediction / goalAmount;
+            if (successRatio > 1.2) {
+                insights.push("🚀 Your campaign shows strong potential to exceed the goal!");
+            } else if (successRatio > 0.8) {
+                insights.push("✅ Good chance of reaching your funding goal.");
+            } else {
+                insights.push("⚠️ Consider adjusting your goal or strategy for better success.");
+            }
+
+            // Duration insights
+            if (data.category === 'Technology' && duration > 45) {
+                insights.push("💡 Tech campaigns typically perform better with shorter durations.");
+            } else if ((data.category === 'Film' || data.category === 'Music') && duration < 30) {
+                insights.push("🎯 Creative campaigns often benefit from longer campaign periods.");
+            }
+
+            // Backer insights
+            const avgContribution = prediction / backers;
+            if (avgContribution > 100) {
+                insights.push("💰 High average contribution suggests premium product positioning.");
+            } else if (avgContribution < 25) {
+                insights.push("👥 Low contribution model - focus on volume and community building.");
+            }
+
+            // Social media insights
+            const socialMedia = parseInt(data.socialMediaPresence);
+            if (socialMedia > 50000) {
+                insights.push("📱 Strong social media presence will boost campaign visibility.");
+            } else if (socialMedia < 5000) {
+                insights.push("📈 Consider building social media following before launch.");
+            }
+
+            return insights;
+        }
+
+        document.getElementById('predictionForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            // Hide previous results
+            document.getElementById('result').classList.add('hidden');
+            document.getElementById('error').classList.add('hidden');
+            document.getElementById('loading').classList.remove('hidden');
+
+            // Get form data
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                document.getElementById('loading').classList.add('hidden');
+
+                if (result.success) {
+                    // Format prediction amount with currency
+                    const currency = data.currency === 'USD' ? '$' :
+                        data.currency === 'EUR' ? '€' :
+                            data.currency === 'GBP' ? '£' :
+                                data.currency === 'CAD' ? 'C$' : '$';
+
+                    document.getElementById('predictionAmount').textContent =
+                        `${currency}${result.prediction.toLocaleString()}`;
+
+                    // Populate campaign details
+                    document.getElementById('categoryIcon').textContent = categoryIcons[data.category] || '📦';
+                    document.getElementById('selectedCategory').textContent = data.category;
+                    document.getElementById('selectedMonth').textContent = data.launchMonth;
+                    document.getElementById('countryFlag').textContent = countryFlags[data.country] || '🌍';
+                    document.getElementById('selectedCountry').textContent = data.country;
+
+                    // Generate and display insights
+                    const insights = generateInsights(data, result.prediction);
+                    const insightsContainer = document.getElementById('insights');
+                    insightsContainer.innerHTML = insights.map(insight =>
+                        `<div class="flex items-start"><span class="mr-2">•</span><span>${insight}</span></div>`
+                    ).join('');
+
+                    // Set campaign context
+                    document.getElementById('campaignContext').textContent =
+                        `${data.category} campaigns in ${data.country}`;
+
+                    document.getElementById('result').classList.remove('hidden');
+
+                    // Smooth scroll to results
+                    setTimeout(() => {
+                        document.getElementById('result').scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'center'
+                        });
+                    }, 100);
+
+                } else {
+                    document.getElementById('errorMessage').textContent = result.error;
+                    document.getElementById('error').classList.remove('hidden');
+                }
+            } catch (error) {
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('errorMessage').textContent = 'An error occurred while making the prediction.';
+                document.getElementById('error').classList.remove('hidden');
+            }
+        });
+
+        // Add smooth animations on page load
+        window.addEventListener('load', function () {
+            document.body.classList.add('animate-fade-in');
+        });
+    </script>
+</body>
+
+</html>
