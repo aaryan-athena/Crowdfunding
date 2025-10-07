@@ -210,4 +210,7 @@ def predict():
 if __name__ == '__main__':
     # Load or train model on startup
     load_model()
-    app.run(debug=True)
+    # Get port from environment variable (Render sets this) or default to 5000
+    port = int(os.environ.get('PORT', 5000))
+    # Bind to 0.0.0.0 to be accessible externally (required for Render)
+    app.run(host='0.0.0.0', port=port, debug=False)
