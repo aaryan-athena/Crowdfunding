@@ -195,6 +195,128 @@ def load_model():
 def index():
     return render_template('index.html')
 
+def calculate_multipliers(num_backers, duration_days, social_media, num_updates, owner_experience, category, video_included):
+    """
+    Calculate multipliers for custom formula based on business logic
+    Returns individual multipliers and combined multiplier
+    """
+    
+    # 1. Backer Multiplier (Most Critical)
+    if num_backers == 0:
+        backer_mult = 0.05  # Minimal baseline
+    elif num_backers <= 10:
+        backer_mult = 0.3  # Early stage
+    elif num_backers <= 50:
+        backer_mult = 0.6  # Gaining momentum
+    elif num_backers <= 100:
+        backer_mult = 0.8  # Active
+    else:
+        backer_mult = 1.0  # Full model prediction
+    
+    # 2. Duration Multiplier
+    if duration_days == 0:
+        duration_mult = 0.2  # No time to raise
+    elif duration_days <= 7:
+        duration_mult = 0.4  # Insufficient time
+    elif duration_days <= 15:
+        duration_mult = 0.6  # Short campaign
+    elif duration_days <= 30:
+        duration_mult = 0.8  # Standard
+    else:
+        duration_mult = 1.0  # Optimal (30+ days)
+    
+    # 3. Social Media Impact
+    if social_media == 0:
+        social_mult = 0.5  # No reach
+    elif social_media <= 3:
+        social_mult = 0.65  # Minimal presence
+    elif social_media <= 7:
+        social_mult = 0.8  # Good presence
+    else:
+        social_mult = 1.0  # Strong presence (8+)
+    
+    # 4. Campaign Updates Impact
+    if num_updates == 0:
+        updates_mult = 0.6  # Abandoned campaign
+    elif num_updates <= 5:
+        updates_mult = 0.75  # Minimal engagement
+    elif num_updates <= 10:
+        updates_mult = 0.9  # Active engagement
+    else:
+        updates_mult = 1.05  # Very active (10+)
+    
+    # 5. Owner Experience Impact
+    if owner_experience == 0:
+        exp_mult = 0.7  # First-time, risky
+    elif owner_experience <= 3:
+        exp_mult = 0.85  # Some track record
+    elif owner_experience <= 7:
+        exp_mult = 0.95  # Experienced
+    else:
+        exp_mult = 1.05  # Proven (8+)
+    
+    # 6. Category Multiplier
+    category_multipliers = {
+        'Technology': 1.0,
+        'Games': 0.95,
+        'Film': 0.85,
+        'Music': 0.80,
+        'Publishing': 0.75,
+        'Other': 0.70
+    }
+    cat_mult = category_multipliers.get(category, 0.70)
+    
+    # 7. Video Presence Impact
+    video_mult = 1.1 if video_included == 'Yes' else 0.7
+    
+    # 8. Country Adjustment (using default USA if not provided, can be enhanced later)
+    country_mult = 1.0  # Default
+    
+    # Calculate combined multiplier
+    total_multiplier = (backer_mult * duration_mult * social_mult * 
+                        updates_mult * exp_mult * cat_mult * video_mult * country_mult)
+    
+    # Apply bounds to prevent extreme values
+    if total_multiplier < 0.15:
+        total_multiplier = 0.15  # Minimum threshold
+    elif total_multiplier > 1.5:
+        total_multiplier = 1.5  # Maximum threshold
+    
+    return {
+        'backer': backer_mult,
+        'duration': duration_mult,
+        'social': social_mult,
+        'updates': updates_mult,
+        'experience': exp_mult,
+        'category': cat_mult,
+        'video': video_mult,
+        'country': country_mult,
+        'total': total_multiplier
+    }
+
+def apply_custom_formula(model_prediction, goal_amount, multipliers):
+    """
+    Apply custom calculation logic to model predictions
+    Combines ML predictions with business logic for realistic results
+    """
+    # Start with model prediction
+    adjusted_amount = model_prediction * multipliers['total']
+    
+    # Apply hard limits
+    # Minimum viable amount - at least $100
+    if adjusted_amount < 100:
+        adjusted_amount = 100
+    
+    # Maximum realistic amount - can't raise more than 3x the goal (realistically ~80% of campaigns succeed)
+    max_realistic_amount = goal_amount * 3
+    if adjusted_amount > max_realistic_amount:
+        adjusted_amount = max_realistic_amount
+    
+    # Round to nearest dollar
+    adjusted_amount = round(adjusted_amount, 2)
+    
+    return adjusted_amount
+
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
@@ -276,13 +398,46 @@ def predict():
         # Scale the features if scaler is available
         if scaler is not None:
             user_df_scaled = scaler.transform(user_df)
-            prediction = model.predict(user_df_scaled)[0]
+            model_prediction = model.predict(user_df_scaled)[0]
         else:
-            prediction = model.predict(user_df)[0]
+            model_prediction = model.predict(user_df)[0]
+        
+        # Get category for multiplier calculations
+        category = data.get('category', 'Other')
+        video_included = data.get('videoIncluded', 'No')
+        
+        # Calculate multipliers based on business logic
+        multipliers = calculate_multipliers(
+            num_backers=num_backers,
+            duration_days=duration_days,
+            social_media=social_media,
+            num_updates=num_updates,
+            owner_experience=owner_experience,
+            category=category,
+            video_included=video_included
+        )
+        
+        # Apply custom formula to get realistic prediction
+        final_prediction = apply_custom_formula(
+            model_prediction=model_prediction,
+            goal_amount=goal_amount,
+            multipliers=multipliers
+        )
         
         return jsonify({
             'success': True,
-            'prediction': round(prediction, 2)
+            'prediction': final_prediction,
+            'model_prediction': round(model_prediction, 2),
+            'multiplier': round(multipliers['total'], 4),
+            'adjustment_details': {
+                'backer_multiplier': round(multipliers['backer'], 2),
+                'duration_multiplier': round(multipliers['duration'], 2),
+                'social_multiplier': round(multipliers['social'], 2),
+                'updates_multiplier': round(multipliers['updates'], 2),
+                'experience_multiplier': round(multipliers['experience'], 2),
+                'category_multiplier': round(multipliers['category'], 2),
+                'video_multiplier': round(multipliers['video'], 2)
+            }
         })
         
     except Exception as e:
